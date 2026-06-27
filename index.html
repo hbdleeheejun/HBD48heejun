@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>동행복권</title>
+    <style>
+        body {
+            font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f9fc;
+            color: #333;
+            -webkit-tap-highlight-color: transparent;
+        }
+        .header {
+            background-color: #0076c0;
+            color: white;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .content {
+            padding: 20px 16px;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .round-info {
+            text-align: center;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        .round-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            letter-spacing: -0.5px;
+        }
+        .round-title span {
+            color: #0076c0;
+        }
+        .round-date {
+            font-size: 12px;
+            color: #888;
+            margin-top: 6px;
+        }
+        .winning-label {
+            font-size: 13px;
+            color: #666;
+            margin-top: 16px;
+        }
+        .ball-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 3px;
+            margin: 15px 0 35px 0;
+        }
+        .ball {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: white;
+            font-weight: bold;
+            font-size: 13px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            line-height: 1;
+        }
+        .plus {
+            font-size: 14px;
+            color: #666;
+            margin: 0 1px;
+        }
+        .ball.c-6_7_9 { background-color: #e4a816; }
+        .ball.c-19 { background-color: #2392d2; }
+        .ball.c-26_29 { background-color: #e86352; }
+        .ball.c-48 { background-color: #5bb544; }
+
+        .result-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .result-status {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .result-main {
+            font-size: 20px;
+            font-weight: bold;
+            color: #333;
+            margin: 0 0 6px 0;
+            letter-spacing: -0.5px;
+        }
+        .result-main span {
+            color: #0076c0;
+        }
+        .result-sub {
+            font-size: 12px;
+            color: #888;
+            margin-bottom: 25px;
+        }
+        .result-comment {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.6;
+            border-top: 1px solid #edf2f7;
+            padding-top: 24px;
+            letter-spacing: -0.3px;
+            word-break: keep-all;
+        }
+        .result-comment span {
+            color: #0076c0;
+        }
+
+        .my-number-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border: 1px solid #e2e8f0;
+            font-size: 13px;
+            text-align: center;
+            margin-bottom: 24px;
+        }
+        .my-number-table td {
+            padding: 12px 4px;
+            border: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        .td-letter {
+            width: 12%;
+            color: #666;
+            background-color: #fafafa;
+        }
+        .td-result {
+            width: 18%;
+            color: #333;
+            border-right: 1px solid #e2e8f0;
+            background-color: #fafafa;
+        }
+        .num-row {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 4px;
+            font-weight: bold;
+            font-size: 14px;
+            color: #333;
+        }
+        .num-row span.match {
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px;
+            line-height: 1;
+            padding-top: 1px;
+            box-sizing: border-box;
+        }
+        .num-row span.match.g1 { background-color: #e4a816; }
+        .num-row span.match.g19 { background-color: #2392d2; }
+        .num-row span.match.g2 { background-color: #e86352; }
+        .num-row span.match.g3 { background-color: #5bb544; }
+
+        .notice-box {
+            background-color: #f4f7fa;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: left;
+            margin-top: 10px;
+        }
+        .notice-box ul {
+            margin: 0;
+            padding-left: 12px;
+            list-style-type: none;
+        }
+        .notice-box li {
+            font-size: 12px;
+            color: #666;
+            line-height: 1.7;
+            margin-bottom: 12px;
+            position: relative;
+            text-indent: -12px;
+            padding-left: 12px;
+            word-break: keep-all;
+        }
+        .notice-box li::before {
+            content: "• ";
+            color: #0076c0;
+            font-weight: bold;
+        }
+        .notice-box li:last-child {
+            margin-bottom: 0;
+        }
+
+        .loading-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            font-size: 14px;
+            color: #666;
+        }
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0076c0;
+            border-radius: 50%;
+            width: 26px; height: 26px;
+            animation: spin 0.8s linear infinite;
+            margin-bottom: 12px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="loading-overlay" id="loading">
+    <div style="text-align: center;">
+        <div class="spinner" style="margin: 0 auto 12px auto;"></div>
+        <div>동행복권 당첨 결과를 조회 중입니다...</div>
+    </div>
+</div>
+
+<div class="header">구매복권 당첨결과</div>
+
+<div class="content">
+    <div class="round-info">
+        <div class="round-title">로또 6/45 <span>제1230회</span></div>
+        <div class="round-date">2026-06-27 추첨</div>
+        <div class="winning-label">당첨번호</div>
+    </div>
+
+    <div class="ball-container">
+        <div class="ball c-6_7_9">6</div>
+        <div class="ball c-6_7_9">7</div>
+        <div class="ball c-6_7_9">9</div>
+        <div class="ball c-19">19</div>
+        <div class="ball c-26_29">26</div>
+        <div class="ball c-26_29">29</div>
+        <div class="plus">+</div>
+        <div class="ball c-48">48</div>
+    </div>
+
+    <div class="result-card">
+        <div class="result-status">축하합니다!</div>
+        <div class="result-main">총 <span>1,771,357,196원</span> 당첨</div>
+        <div class="result-sub">지급기한은 1년입니다.</div>
+        
+        <div class="result-comment">
+            <span>고객님이 구매하신 복권 구매 금액의 40%</span>이상이<br>
+            <span>의미 있는 기부로,</span> 사회에 행복을 전합니다.
+        </div>
+    </div>
+
+    <table class="my-number-table">
+        <tr>
+            <td class="td-letter">A</td>
+            <td class="td-result win">1등당첨</td>
+            <td>
+                <div class="num-row">
+                    <span class="match g1">6</span>
+                    <span class="match g1">7</span>
+                    <span class="match g1">9</span>
+                    <span class="match g19">19</span>
+                    <span class="match g2">29</span>
+                    <span class="match g3">48</span>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <div class="notice-box">
+        <ul>
+            <li>지급기한은 해당 회차 지급개시일(생일)로부터 오빠가 배우로 활동하는 평생입니다.</li>
+            <li>지급기한일이 촬영, 대본 리딩, 공연 또는 휴식기인 경우에도 언제든 청구(팬들의 변치 않는 응원)가 가능합니다.</li>
+            <li>지급기한일 초과 시 당첨자가 미수령한 당첨금은 자동 소멸되지 않으며, 매년 더 큰 축하와 응원으로 이월되어 오빠의 행복기금으로 영구 귀속됩니다.</li>
+        </ul>
+    </div>
+</div>
+
+<script>
+    window.addEventListener('DOMContentLoaded', () => {
+        setTimeout(() => {
+            document.getElementById('loading').style.display = 'none';
+        }, 1000);
+    });
+</script>
+
+</body>
+</html>
